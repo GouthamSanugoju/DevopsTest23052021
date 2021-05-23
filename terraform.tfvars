@@ -1,5 +1,5 @@
 #Resource Group variables details for creation
-resource_group_name     = "terraform-test-manideep"
+resource_group_name     = "terraform-test-Goutham"
 resource_group_location = "westeurope"
 
 #Vnet variables
@@ -16,4 +16,4 @@ lb = "VMSSloadbalancer"
 #VMSS
 vmssname = "vmsswin"
 username = "azureuser"
-password = "Neudesic@12345"
+password = "Gout$123"
