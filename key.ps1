@@ -1,0 +1,1 @@
+$storagekey = (Get-AzStorageAccountKey -ResourceGroupName ${env:TERRAFORMSTG} -AccountName ${env:TERRAFORMSTORAGEACCOUNT}).Value[0]

@@ -1,0 +1,59 @@
+
+trigger: none
+
+pool:
+  vmImage: windows-2019
+
+steps:
+ - task: AzureCLI@2
+   inputs:
+     azureSubscription: 'VS-Ent-Dev-02 (de7365e2-8329-48fc-8273-4ab1574e6b4b)'
+     scriptType: 'ps'
+     scriptLocation: 'scriptPath'
+     scriptPath: 'strg.ps1'
+
+ - task: AzurePowerShell@5
+   inputs:
+     azureSubscription: 'VS-Ent-Dev-02 (de7365e2-8329-48fc-8273-4ab1574e6b4b)'
+     ScriptType: 'FilePath'
+     ScriptPath: 'key.ps1'
+     azurePowerShellVersion: 'LatestVersion'
+ 
+ - task: replacetokens@3
+   inputs:
+     targetFiles: '**/*.tf'
+     encoding: 'auto'
+     writeBOM: true
+     actionOnMissing: 'warn'
+     keepToken: false
+     tokenPrefix: '#{'
+     tokenSuffix: '}#'
+     useLegacyPattern: false
+     enableTransforms: false
+     enableTelemetry: true
+ 
+ - task: TerraformInstaller@0
+   inputs:
+     terraformVersion: '0.15.1'
+
+ - task: TerraformTaskV1@0
+   inputs:
+     provider: 'azurerm'
+     command: 'init'
+     backendServiceArm: 'VS-Ent-Dev-02 (de7365e2-8329-48fc-8273-4ab1574e6b4b)'
+     backendAzureRmResourceGroupName: '$(terraformstg)'
+     backendAzureRmStorageAccountName: '$(terraformstorageaccount)'
+     backendAzureRmContainerName: 'terraform'
+     backendAzureRmKey: 'terraform.tfstate'
+ 
+ - task: TerraformTaskV1@0
+   inputs:
+     provider: 'azurerm'
+     command: 'plan'
+     environmentServiceNameAzureRM: 'VS-Ent-Dev-02 (de7365e2-8329-48fc-8273-4ab1574e6b4b)'
+  
+ - task: TerraformTaskV1@0
+   inputs:
+     provider: 'azurerm'
+     command: 'apply'
+     environmentServiceNameAzureRM: 'VS-Ent-Dev-02 (de7365e2-8329-48fc-8273-4ab1574e6b4b)'
